@@ -3,15 +3,18 @@ plex.state = "play";
 
 plex.plexServer = localStorage.getItem("plexServer");
 plex.plexClient = localStorage.getItem("plexClient");
+plex.plexToken = localStorage.getItem("plexToken");
 plex.configureUrl = "http://spangborn.github.io/pebble-plex-remote/index.html";
 
 // This won't work without Plexpass, BAH.
 plex.getPlaying = function (command) {
+
+	console.log("Getting currently playing media with Plex token:" + plex.plexToken);
 	var req1 = new XMLHttpRequest();
 	req1.timeout = 2000;
 	req1.setRequestHeader('X-Plex-Device', 'Web');
 	req1.setRequestHeader('X-Plex-Version', '1.1');
-	req1.setRequestHeader('X-Plex-Token', 'PLEX TOKEN HERE');
+	req1.setRequestHeader('X-Plex-Token', localStorage.getItem("plexToken"));
 	req1.setRequestHeader('X-Plex-Client-Platform', 'Web');
 	req1.setRequestHeader('X-Plex-Device-Name', 'Pebble')
 	req1.setRequestHeader('X-Plex-Model', 'V2R2');
@@ -28,6 +31,12 @@ plex.getPlaying = function (command) {
 			console.log("You evidently don't have Plexpass.");
 		}
 	};
+	req1.onload = function (e) {
+		if (req1.readyState === 4) {  
+			console.log(req1.responseText);
+		} 
+	};
+	req1.send(null);
 }
 
 plex.doCommand = function (action) {
